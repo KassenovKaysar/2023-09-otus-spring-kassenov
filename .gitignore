@@ -27,17 +27,11 @@ replay_pid*
 *.iws
 *.iml
 *.ipr
-<<<<<<< hw01
 */*.iml
 
 target/
 dependency-reduced-pom.xml
 */dependency-reduced-pom.xml
-=======
-
-target/
-dependency-reduced-pom.xml
->>>>>>> main
 
 ### STS ###
 .apt_generated
