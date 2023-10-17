@@ -7,6 +7,7 @@ import ru.otus.hw.dao.dto.QuestionDto;
 import ru.otus.hw.domain.Question;
 import ru.otus.hw.exceptions.QuestionReadException;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
@@ -17,9 +18,8 @@ public class CsvQuestionDao implements QuestionDao {
 
     @Override
     public List<Question> findAll() {
-        try {
-            final String testFileName = fileNameProvider.getTestFileName();
-            InputStream in = getClass().getResourceAsStream(testFileName);
+        final String testFileName = fileNameProvider.getTestFileName();
+        try (InputStream in = getClass().getResourceAsStream(testFileName)) {
             List<QuestionDto> questions = new CsvToBeanBuilder(new InputStreamReader(in))
                     .withType(QuestionDto.class)
                     .withSkipLines(1)
@@ -29,13 +29,10 @@ public class CsvQuestionDao implements QuestionDao {
             return questions.stream()
                     .map(QuestionDto::toDomainObject)
                     .toList();
-        } catch (RuntimeException e) {
-            throw new QuestionReadException("questions couldn't be read", e);
+        } catch (RuntimeException ex) {
+            throw new QuestionReadException("questions couldn't be read, impossible to read from source", ex);
+        } catch (IOException e) {
+            throw new QuestionReadException("questions reading have been completed with errors", e);
         }
-        // Использовать CsvToBean
-        // https://opencsv.sourceforge.net/#collection_based_bean_fields_one_to_many_mappings
-        // Использовать QuestionReadException
-
-
     }
 }
